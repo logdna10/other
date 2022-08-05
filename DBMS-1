@@ -1,0 +1,183 @@
+mysql> SELECT m.* from MUSICIAN m where m.ssn in (select p.ssn from PLAY p group by p.ssn having count(p.ssn) = (select count(*) from MUSICIAN));
++-----+------+---------+--------------+
+| ssn | name | address | phone_number |
++-----+------+---------+--------------+
+| M3  | misa | shibuya |       345678 |
++-----+------+---------+--------------+
+1 row in set (0.00 sec)
+
+mysql> select count(p.I_id),i.name,count(p.I_id)/(select count(*) from INSTRUMENT) as AVERAGE from INSTRUMENT i,PLAY p where p.I_id=i.I_id group by p.I_id;
++---------------+-----------+---------+
+| count(p.I_id) | name      | AVERAGE |
++---------------+-----------+---------+
+|             2 | guitar    |  0.2000 |
+|             1 | piano     |  0.1000 |
+|             2 | guitar    |  0.2000 |
+|             2 | guitar    |  0.2000 |
+|             1 | violin    |  0.1000 |
+|             1 | violin    |  0.1000 |
+|             1 | saxophone |  0.1000 |
+|             1 | sitar     |  0.1000 |
+|             3 | flute     |  0.3000 |
+|             1 | flute     |  0.1000 |
++---------------+-----------+---------+
+10 rows in set (0.00 sec)
+
+mysql> select m.name,s.title as 'song title',a.title as 'album title' from MUSICIAN m ,SONG s,ALBUM a ,PERFORM p WHERE m.ssn=p.ssn and s.song_id=p.song_id and a.A_id=s.A_id;
++--------+----------------+------------------+
+| name   | song title     | album title      |
++--------+----------------+------------------+
+| menma  | secret base    | anohana          |
+| eve    | sparkle        | your name        |
+| mitsua | sparkle        | your name        |
+| v      | sparkle        | your name        |
+| mitsua | nandemonai     | your name        |
+| lisa   | unlasting      | sword art online |
+| lisa   | crossing field | sword art online |
+| lisa   | demon          | demon slayer     |
+| eve    | demon          | demon slayer     |
+| menma  | demon          | demon slayer     |
+| v      | demon          | demon slayer     |
+| eve    | try            | jujutsu kaisen   |
++--------+----------------+------------------+
+12 rows in set (0.00 sec)
+
+mysql> select s.* from SONG s ,PERFORM p where p.song_id=s.song_id group by p.song_id having count(p.song_id)>=3;
++---------+---------+--------+------+
+| song_id | title   | author | A_id |
++---------+---------+--------+------+
+| S2      | sparkle | taki   | A7   |
+| S6      | demon   | suzy   | A3   |
++---------+---------+--------+------+
+2 rows in set (0.00 sec)
+
+mysql> select m.* from MUSICIAN m where m.ssn NOT IN (select a.ssn from ALBUM a);
++-----+-------+-------------+--------------+
+| ssn | name  | address     | phone_number |
++-----+-------+-------------+--------------+
+| M10 | rose  | south korea |       901235 |
+| M7  | v     | south korea |       789012 |
+| M9  | jisoo | south korea |       901234 |
++-----+-------+-------------+--------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM ALBUM;
++------+----------------+--------+------+------------------+
+| A_id | copyright_date | format | ssn  | title            |
++------+----------------+--------+------+------------------+
+| A1   | 2002-01-02     | cd     | M2   | jujutsu kaisen   |
+| A10  | 2017-06-07     | mp4    | M5   | anohana          |
+| A2   | 2006-03-03     | cd     | M1   | sword art online |
+| A3   | 2016-03-03     | mp4    | M1   | demon slayer     |
+| A4   | 2018-12-03     | mp4    | M1   | alicization      |
+| A5   | 2018-02-03     | mp4    | M3   | hunter x hunter  |
+| A6   | 2017-06-13     | mp4    | M8   | run on           |
+| A7   | 2018-06-05     | mp4    | M6   | your name        |
+| A8   | 2019-06-23     | mp4    | M3   | attack on titan  |
+| A9   | 2020-06-20     | mp4    | M4   | silent voice     |
++------+----------------+--------+------+------------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM INSTRUMENT;
++------+-------------+-----------+
+| I_id | musical_key | name      |
++------+-------------+-----------+
+| I1   | B-flat      | guitar    |
+| I10  | c-flat      | piano     |
+| I2   | c-flat      | guitar    |
+| I3   | c-sharp     | guitar    |
+| I4   | g-sharp     | violin    |
+| I5   | e-sharp     | violin    |
+| I6   | c-minor     | saxophone |
+| I7   | b-minor     | sitar     |
+| I8   | b-flat      | flute     |
+| I9   | e-flat      | flute     |
++------+-------------+-----------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM SONG;
++---------+----------------+--------+------+
+| song_id | title          | author | A_id |
++---------+----------------+--------+------+
+| S1      | secret base    | menma  | A10  |
+| S2      | sparkle        | taki   | A7   |
+| S3      | nandemonai     | mitsua | A7   |
+| S4      | unlasting      | lisa   | A2   |
+| S5      | crossing field | lisa   | A2   |
+| S6      | demon          | suzy   | A3   |
+| S7      | try            | eve    | A1   |
++---------+----------------+--------+------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT * FROM PERFORM;
++-----+---------+
+| ssn | song_id |
++-----+---------+
+| M5  | S1      |
+| M2  | S2      |
+| M6  | S2      |
+| M7  | S2      |
+| M6  | S3      |
+| M1  | S4      |
+| M1  | S5      |
+| M1  | S6      |
+| M2  | S6      |
+| M5  | S6      |
+| M7  | S6      |
+| M2  | S7      |
++-----+---------+
+12 rows in set (0.00 sec)
+
+mysql> SELECT * FROM PLAY;
++-----+------+
+| ssn | I_id |
++-----+------+
+| M1  | I1   |
+| M3  | I1   |
+| M3  | I10  |
+| M1  | I2   |
+| M3  | I2   |
+| M3  | I3   |
+| M9  | I3   |
+| M3  | I4   |
+| M3  | I5   |
+| M3  | I6   |
+| M3  | I7   |
+| M3  | I8   |
+| M5  | I8   |
+| M9  | I8   |
+| M3  | I9   |
++-----+------+
+15 rows in set (0.00 sec)
+
+mysql> SHOW TABLES;
++----------------------+
+| Tables_in_1RV21MC006 |
++----------------------+
+| ALBUM                |
+| INSTRUMENT           |
+| MUSICIAN             |
+| PERFORM              |
+| PLAY                 |
+| SONG                 |
+| student              |
++----------------------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT * FROM MUSICIAN;
++-----+--------+-------------+--------------+
+| ssn | name   | address     | phone_number |
++-----+--------+-------------+--------------+
+| M1  | lisa   | tokyo       |       123456 |
+| M10 | rose   | south korea |       901235 |
+| M2  | eve    | shibuya     |       234567 |
+| M3  | misa   | shibuya     |       345678 |
+| M4  | elisa  | kanto       |       456789 |
+| M5  | menma  | okinawa     |       567890 |
+| M6  | mitsua | itamori     |       678901 |
+| M7  | v      | south korea |       789012 |
+| M8  | DO     | south korea |       890123 |
+| M9  | jisoo  | south korea |       901234 |
++-----+--------+-------------+--------------+
+10 rows in set (0.00 sec)
+

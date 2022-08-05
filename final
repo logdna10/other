@@ -1,0 +1,9 @@
+SELECT m.* from MUSICIAN m where m.ssn in (select p.ssn from PLAY p group by p.ssn having count(p.ssn) = (select count(*) from MUSICIAN));
+
+select count(p.I_id),i.name,count(p.I_id)/(select count(*) from INSTRUMENT) as AVERAGE from INSTRUMENT i,PLAY p where p.I_id=i.I_id group by p.I_id;
+
+select m.name,s.title as 'song title',a.title as 'album title' from MUSICIAN m ,SONG s,ALBUM a ,PERFORM p WHERE m.ssn=p.ssn and s.song_id=p.song_id and a.A_id=s.A_id;
+
+select s.* from SONG s ,PERFORM p where p.song_id=s.song_id group by p.song_id having count(p.song_id)>=3;
+
+ select m.* from MUSICIAN m where m.ssn NOT IN (select a.ssn from ALBUM a);
